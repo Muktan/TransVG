@@ -14,13 +14,12 @@ import re
 import sys
 import json
 import torch
-import librosa
 import numpy as np
 import os.path as osp
 import scipy.io as sio
 import torch.utils.data as data
 sys.path.append('.')
-from transformers import Wav2Vec2Processor, WavLMModel, HubertModel, Wav2Vec2Model
+
 from PIL import Image
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from utils.word_utils import Corpus
@@ -164,14 +163,13 @@ class TransVGDataset(data.Dataset):
         self.split = split
         self.tokenizer = BertTokenizer.from_pretrained(bert_model, do_lower_case=True)
         self.return_idx=return_idx
-        self.WavLMprocessor = Wav2Vec2Processor.from_pretrained("patrickvonplaten/wavlm-libri-clean-100h-base-plus")
 
         assert self.transform is not None
-        self.augment = False
-        # if split == 'train':
-        #     self.augment = True
-        # else:
-        #     self.augment = False
+
+        if split == 'train':
+            self.augment = True
+        else:
+            self.augment = False
 
         if self.dataset == 'referit':
             self.dataset_root = osp.join(self.data_root, 'referit')
@@ -239,7 +237,7 @@ class TransVGDataset(data.Dataset):
 
         bbox = torch.tensor(bbox)
         bbox = bbox.float()
-        return img, phrase, bbox, img_file
+        return img, phrase, bbox 
 
     def tokenize_phrase(self, phrase):
         return self.corpus.tokenize(phrase, self.query_len)
@@ -250,12 +248,8 @@ class TransVGDataset(data.Dataset):
     def __len__(self):
         return len(self.images)
 
-    def read_file(self, file_name):
-        speech, _ = librosa.load(file_name, sr=16000)
-        return speech
-
     def __getitem__(self, idx):
-        img, phrase, bbox, img_filename = self.pull_item(idx)
+        img, phrase, bbox = self.pull_item(idx)
         # phrase = phrase.decode("utf-8").encode().lower()
         phrase = phrase.lower()
         input_dict = {'img': img, 'box': bbox, 'text': phrase}
@@ -264,38 +258,23 @@ class TransVGDataset(data.Dataset):
         bbox = input_dict['box']
         phrase = input_dict['text']
         img_mask = input_dict['mask']
-        # print(img_filename, phrase)
         
-        if self.lstm: # we wont be using this
+        if self.lstm:
             phrase = self.tokenize_phrase(phrase)
             word_id = phrase
             word_mask = np.array(word_id>0, dtype=int)
-        else: 
-            # encode an audio file to waveform
-            # which audio file to use?
-            # we can use the image filename to get the corresponding audio file
-            # steps to do above mentioned thing
-            # 1) change the pull_item function to return imagefile name too 
-            # 2) get the file_name and search it in the spokec_coco.json dataset, we can keep that json loaded in a dictionary for faster access
-            # 3) get corresponding audio file and read it
-            
-            audio_filename = img_filename.split(".")[0] + "_" + "_".join(phrase.split())
-            waveform = self.read_file("/content/data_new/"+audio_filename+".wav")
-            audio_data = self.WavLMprocessor(waveform, padding='max_length', max_length=100000, return_tensors="pt", sampling_rate=16000).input_values[0][:100000]
-
+        else:
             ## encode phrase to bert input
-            # examples = read_examples(phrase, idx)
-            # features = convert_examples_to_features(
-            #     examples=examples, seq_length=self.query_len, tokenizer=self.tokenizer)
-            # word_id = features[0].input_ids
-            # word_mask = features[0].input_mask
-        
-
+            examples = read_examples(phrase, idx)
+            features = convert_examples_to_features(
+                examples=examples, seq_length=self.query_len, tokenizer=self.tokenizer)
+            word_id = features[0].input_ids
+            word_mask = features[0].input_mask
         
         if self.testmode:
             return img, np.array(word_id, dtype=int), np.array(word_mask, dtype=int), \
                 np.array(bbox, dtype=np.float32), np.array(ratio, dtype=np.float32), \
                 np.array(dw, dtype=np.float32), np.array(dh, dtype=np.float32), self.images[idx][0]
-        else: # there is collate fn that will tweak the output returned here
+        else:
             # print(img.shape)
-            return img, np.array(img_mask), audio_data, np.array(bbox, dtype=np.float32)
+            return img, np.array(img_mask), np.array(word_id, dtype=int), np.array(word_mask, dtype=int), np.array(bbox, dtype=np.float32)

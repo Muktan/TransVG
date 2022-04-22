@@ -26,15 +26,20 @@ def train_one_epoch(args, model: torch.nn.Module, data_loader: Iterable,
     print_freq = 10
 
     for batch in metric_logger.log_every(data_loader, print_freq, header):
-        img_data, text_data, target = batch
+        img_data, audio_data, target = batch
 
         # copy to GPU
         img_data = img_data.to(device)
-        text_data = text_data.to(device)
+        audio_data = torch.stack(audio_data)
+        
+        # list(audio_data, text_data)
+        audio_data = audio_data.to(device)
+        # print(img_data)
+        # print(audio_data)
         target = target.to(device)
 
         # model forward
-        output = model(img_data, text_data)
+        output = model(img_data, audio_data)
 
         loss_dict = loss_utils.trans_vg_loss(output, target)
         losses = sum(loss_dict[k] for k in loss_dict.keys())
@@ -73,14 +78,16 @@ def validate(args, model: torch.nn.Module, data_loader: Iterable, device: torch.
     header = 'Eval:'
 
     for batch in metric_logger.log_every(data_loader, 10, header):
-        img_data, text_data, target = batch
+        img_data, audio_data, target = batch
         batch_size = img_data.tensors.size(0)
         # copy to GPU
         img_data = img_data.to(device)
-        text_data = text_data.to(device)
+        audio_data = torch.stack(audio_data)
+        # list(audio_data, text_data)
+        audio_data = audio_data.to(device)
         target = target.to(device)
         
-        pred_boxes = model(img_data, text_data)
+        pred_boxes = model(img_data, audio_data)
         miou, accu = eval_utils.trans_vg_eval_val(pred_boxes, target)
         
         metric_logger.update_v2('miou', torch.mean(miou), batch_size)
@@ -99,13 +106,15 @@ def evaluate(args, model: torch.nn.Module, data_loader: Iterable, device: torch.
     pred_box_list = []
     gt_box_list = []
     for _, batch in enumerate(tqdm(data_loader)):
-        img_data, text_data, target = batch
+        img_data, audio_data, target = batch
         batch_size = img_data.tensors.size(0)
         # copy to GPU
         img_data = img_data.to(device)
-        text_data = text_data.to(device)
+        audio_data = torch.stack(audio_data)
+        # list(audio_data, text_data)
+        audio_data = audio_data.to(device)
         target = target.to(device)
-        output = model(img_data, text_data)
+        output = model(img_data, audio_data)
 
         pred_box_list.append(output.cpu())
         gt_box_list.append(target.cpu())

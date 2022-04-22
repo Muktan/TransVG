@@ -42,7 +42,6 @@ def make_transforms(args, image_set, is_onestage=False):
             ),
             T.ColorJitter(0.4, 0.4, 0.4),
             T.GaussianBlur(aug_blur=args.aug_blur),
-            T.RandomHorizontalFlip(),
             T.ToTensor(),
             T.NormalizeAndPad(size=imsize, aug_translate=args.aug_translate)
         ])

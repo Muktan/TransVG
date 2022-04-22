@@ -115,27 +115,27 @@ if [ ! -d $_arg_path ]; then
 fi
 cd $_arg_path
 
-mkdir referit
-cd referit
+# mkdir referit
+# cd referit
 
-printf "Downloading ReferIt dataset (This may take a while...)"
-aria2c -x 8 $REFERIT_DATA_URL
+# printf "Downloading ReferIt dataset (This may take a while...)"
+# aria2c -x 8 $REFERIT_DATA_URL
 
 
-printf "Uncompressing data..."
-tar -xzvf $REFERIT_FILE
-rm $REFERIT_FILE
+# printf "Uncompressing data..."
+# tar -xzvf $REFERIT_FILE
+# rm $REFERIT_FILE
 
-mkdir splits
-cd splits
+# mkdir splits
+# cd splits
 
-printf "Downloading ReferIt Splits..."
-aria2c -x 8 $REFERIT_SPLITS_URL
+# printf "Downloading ReferIt Splits..."
+# aria2c -x 8 $REFERIT_SPLITS_URL
 
-tar -xjvf $SPLIT_FILE
-rm $SPLIT_FILE
+# tar -xjvf $SPLIT_FILE
+# rm $SPLIT_FILE
 
-cd ../..
+# cd ../..
 
 mkdir -p other/images/mscoco/images
 cd other/images/mscoco/images
@@ -147,10 +147,10 @@ unzip $COCO_FILE
 rm $COCO_FILE
 
 cd ../../..
-printf "Downloading refcoco, refcocog and refcoco+ splits..."
-aria2c -x 8 $REFCOCO_URL
-aria2c -x 8 $REFCOCO_PLUS_URL
-aria2c -x 8 $REFCOCOG_URL
+# printf "Downloading refcoco, refcocog and refcoco+ splits..."
+# aria2c -x 8 $REFCOCO_URL
+# aria2c -x 8 $REFCOCO_PLUS_URL
+# aria2c -x 8 $REFCOCOG_URL
 
-unzip "*.zip"
-rm *.zip
+# unzip "*.zip"
+# rm *.zip

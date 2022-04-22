@@ -101,7 +101,7 @@ def get_args_parser():
                         help='location of pre-parsed dataset info')
     parser.add_argument('--dataset', default='referit', type=str,
                         help='referit/unc/unc+/gref/gref_umd')
-    parser.add_argument('--max_query_len', default=20, type=int,
+    parser.add_argument('--max_query_len', default=312, type=int,
                         help='maximum time steps (lang length) per batch')
     
     # dataset parameters
@@ -136,8 +136,10 @@ def main(args):
     np.random.seed(seed)
     random.seed(seed)
     
-    # build model
+    # build model: need to make changes how model is built specifically linguistic part
     model = build_model(args)
+
+
     model.to(device)
 
     model_without_ddp = model
