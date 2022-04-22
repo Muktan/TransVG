@@ -8,6 +8,9 @@ venv/
 *.idea/
 *.so
 *.pth
+!my_test_split.pth
+!my_train_split.pth
+!my_val_split.pth
 *.pkl
 *.zip
 *.bin
