@@ -280,7 +280,7 @@ class TransVGDataset(data.Dataset):
             # 3) get corresponding audio file and read it
             
             audio_filename = img_filename.split(".")[0] + "_" + "_".join(phrase.split())
-            waveform = self.read_file("/content/data_new/"+audio_filename+".wav")
+            waveform = self.read_file("./data_new/"+audio_filename+".wav")
             audio_data = self.WavLMprocessor(waveform, padding='max_length', max_length=100000, return_tensors="pt", sampling_rate=16000).input_values[0][:100000]
 
             ## encode phrase to bert input
