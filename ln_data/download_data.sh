@@ -143,7 +143,7 @@ cd other/images/mscoco/images
 printf "Downloading MS COCO 2014 train images (This may take a while...)"
 aria2c -x 8 $COCO_DATA_URL
 
-unzip $COCO_FILE
+unzip -q $COCO_FILE
 rm $COCO_FILE
 
 cd ../../..

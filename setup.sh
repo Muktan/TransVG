@@ -2,8 +2,9 @@ nvidia-smi
 pip install transformers
 
 pip install --upgrade --no-cache-dir gdown
-
-pip3 install torch==1.5.0
+echo "export PATH=\"`python3 -m site --user-base`/bin:\$PATH\"" >> ~/.bashrc
+source ~/.bashrc
+pip install torch==1.5.0
 
 pip install torchvision==0.6.0
 
@@ -56,6 +57,3 @@ cd TransVG
 mv -v ./data_new/data_new* ./data_audio
 rm -r ./data_new
 mv -v ./data_audio ./data_new 
-
-
-
