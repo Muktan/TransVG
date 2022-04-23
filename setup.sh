@@ -12,13 +12,13 @@ python -c "import torch; print(torch.__version__)"
 
 pip install pytorch-pretrained-bert
 
-apt-get install aria2
+sudo apt-get install aria2
 git clone https://github.com/Muktan/TransVG.git
 pwd
 
 cd ./TransVG/ln_data
 ls
-bash download_data.sh --path .
+sudo bash download_data.sh --path .
 pwd
 
 cd ../
@@ -32,7 +32,7 @@ mv ./TransVG/my_train_split.pth ./TransVG/data/unc/unc_train.pth
 mv ./TransVG/my_test_split.pth ./TransVG/data/unc/unc_testA.pth
 mv ./TransVG/my_val_split.pth ./TransVG/data/unc/unc_val.pth
 
-bash ./TransVG/checkpoints/download_detr_model.sh
+sudo bash ./TransVG/checkpoints/download_detr_model.sh
 gdown --folder --no-cookies --id 1SOHPCCR6yElQmVp96LGJhfTP46RxVwzF
 
 mv -v ./TransVG/pretrained_detr_params/* ./TransVG/checkpoints
