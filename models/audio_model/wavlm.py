@@ -38,7 +38,7 @@ class WAVLM(nn.Module):
         self.wavlm = WavLMModel.from_pretrained("patrickvonplaten/wavlm-libri-clean-100h-base-plus")
 
         if not train_bert:
-            for parameter in self.bert.parameters():
+            for parameter in self.wavlm.parameters():
                 parameter.requires_grad_(False)
 
     def forward(self, audio_data):
