@@ -191,7 +191,7 @@ def main(args):
     
     
     # img = mpimg.imread('')
-    img = Image.open('test_img.jpg')
+    img = Image.open('./data_new/test_img.jpg')
     fig, ax = plt.subplots()
     ax.imshow(img)
     
