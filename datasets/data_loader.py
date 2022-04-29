@@ -259,12 +259,18 @@ class TransVGDataset(data.Dataset):
         img, phrase, bbox, img_filename = self.pull_item(idx)
         # phrase = phrase.decode("utf-8").encode().lower()
         phrase = phrase.lower()
+        print(type(img), img.shape)
+        print(type(bbox), bbox.shape)
+        print(type(phrase), phrase)
         input_dict = {'img': img, 'box': bbox, 'text': phrase}
         input_dict = self.transform(input_dict)
         img = input_dict['img']
         bbox = input_dict['box']
         phrase = input_dict['text']
         img_mask = input_dict['mask']
+        print(type(img), img.shape)
+        print(type(bbox), bbox.shape)
+        print(type(phrase), phrase)
         # print(img_filename, phrase)
         
         if self.lstm: # we wont be using this
