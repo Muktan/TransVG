@@ -162,7 +162,7 @@ def main(args):
     # dataset_test = build_dataset("train", args)
     ## note certain dataset does not have 'test' set:
     ## 'unc': {'train', 'val', 'trainval', 'testA', 'testB'}
-    dataset_test  = build_dataset('test', args)
+    dataset_test  = build_dataset('testA', args)
     
     if args.distributed:
         sampler_test = DistributedSampler(dataset_test, shuffle=False)
@@ -188,10 +188,11 @@ def main(args):
     
     # perform evaluation
     op, tar = evaluate(args, model, data_loader_test, device)
-    
+    op = op.cpu()
+    tar = tar.cpu()
     
     # img = mpimg.imread('')
-    img = Image.open('./data_new/test_img.jpg')
+    img = Image.open('/content/TransVG/ln_data/other/images/mscoco/images/train2014/COCO_train2014_000000003293.jpg')
     fig, ax = plt.subplots()
     ax.imshow(img)
     
@@ -202,6 +203,7 @@ def main(args):
     rect2 = patches.Rectangle((x_c,y_c),w,h, edgecolor='r', facecolor="none")
     ax.add_patch(rect2)
     plt.show()
+    plt.savefig("/content/result.png", dpi=150)
     
     # call the plot function that will plot the image and the predicted bounding box
     # we know where the image is stored so we can directly plot it... then we have to draw a squar eover it
