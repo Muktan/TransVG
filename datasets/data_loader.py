@@ -212,6 +212,7 @@ class TransVGDataset(data.Dataset):
             imgset_file = '{0}_{1}.pth'.format(self.dataset, split)
             imgset_path = osp.join(dataset_path, imgset_file)
             self.images += torch.load(imgset_path)
+            
 
     def exists_dataset(self):
         return osp.exists(osp.join(self.split_root, self.dataset))
@@ -220,7 +221,7 @@ class TransVGDataset(data.Dataset):
         if self.dataset == 'flickr':
             img_file, bbox, phrase = self.images[idx]
         else:
-            img_file, _, bbox, phrase, attri = self.images[idx]
+            img_file, _, bbox, phrase, _ = self.images[idx]
         ## box format: to x1y1x2y2
         if not (self.dataset == 'referit' or self.dataset == 'flickr'):
             bbox = np.array(bbox, dtype=int)

@@ -11,11 +11,15 @@ from pathlib import Path
 import torch
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader, DistributedSampler
-
+import matplotlib.pyplot as plt
+from matplotlib import pyplot  
+import matplotlib.image as mpimg
+from matplotlib import patches
 import datasets
 import utils.misc as utils
 from models import build_model
 from datasets import build_dataset
+from PIL import Image
 from engine import train_one_epoch, evaluate
 
 
@@ -183,21 +187,26 @@ def main(args):
     start_time = time.time()
     
     # perform evaluation
-    accuracy = evaluate(args, model, data_loader_test, device)
+    op, tar = evaluate(args, model, data_loader_test, device)
     
-    if utils.is_main_process():
-        total_time = time.time() - start_time
-        total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-        print('Training time {}'.format(total_time_str))
+    
+    # img = mpimg.imread('')
+    img = Image.open('test_img.jpg')
+    fig, ax = plt.subplots()
+    ax.imshow(img)
+    
+    x_c, y_c, w, h = op.unbind(-1)
+    rect = patches.Rectangle((x_c,y_c),w,h, edgecolor='r', facecolor="none")
+    ax.add_patch(rect)
+    x_c, y_c, w, h = tar.unbind(-1)
+    rect2 = patches.Rectangle((x_c,y_c),w,h, edgecolor='r', facecolor="none")
+    ax.add_patch(rect2)
+    plt.show()
+    
+    # call the plot function that will plot the image and the predicted bounding box
+    # we know where the image is stored so we can directly plot it... then we have to draw a squar eover it
 
-        log_stats = {'test_model:': args.eval_model,
-                    '%s_set_accuracy'%args.eval_set: accuracy,
-                    }
-        print(log_stats)
-        if args.output_dir and utils.is_main_process():
-                with (output_dir / "eval_log.txt").open("a") as f:
-                    f.write(json.dumps(log_stats) + "\n")
-
+    
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('TransVG evaluation script', parents=[get_args_parser()])
     args = parser.parse_args()
