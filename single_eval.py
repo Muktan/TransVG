@@ -9,7 +9,6 @@ import numpy as np
 from pathlib import Path
 
 import torch
-from utils.box_utils import xyxy2xywh, xywh2xyxy
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader, DistributedSampler
 import matplotlib.pyplot as plt
@@ -135,6 +134,18 @@ def get_args_parser():
 
     return parser
 
+def xywh2xyxy(x):
+    x_c, y_c, w, h = x
+    b = [x_c - 0.5 * w, y_c - 0.5 * h,
+        x_c + 0.5 * w, y_c + 0.5 * h]
+    return b
+
+def xyxy2xywh(x):
+    x0, y0, x1, y1 = x
+    b = [(x0 + x1) / 2.0, (y0 + y1) / 2.0,
+         (x1 - x0), (y1 - y0)]
+    return b
+
 def helper(x, w, h):
     x = [i*640 for i in x]
     dw = 640 - w
@@ -142,6 +153,7 @@ def helper(x, w, h):
     top = round(dh / 2.0 - 0.1)
     left = round(dw / 2.0 - 0.1)
     c1 = xywh2xyxy(x)
+    
     c1[0], c1[2] = c1[0]-left, c1[2]-left
     c1[1], c1[3] = c1[1]-top, c1[3]-top
     c1 = xyxy2xywh(c1)
