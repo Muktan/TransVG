@@ -172,11 +172,14 @@ class RandomResize(object):
         img = input_dict['img']
         box = input_dict['box']
         size = random.choice(self.sizes)
+        print(img.size)
+        print(box)
         if self.with_long_side:
             resized_img, resized_box = resize_according_to_long_side(img, box, size)
         else:
             resized_img, resized_box = resize_according_to_short_side(img, box, size)
-
+        print(resized_img.size)
+        print(resized_box)
         input_dict['img'] = resized_img
         input_dict['box'] = resized_box
         return input_dict
@@ -275,7 +278,7 @@ class NormalizeAndPad(object):
 
         input_dict['img'] = out_img
         input_dict['mask'] = out_mask
-
+        print(input_dict['box'])
         if 'box' in input_dict.keys():
             box = input_dict['box']
             box[0], box[2] = box[0]+left, box[2]+left
@@ -284,6 +287,6 @@ class NormalizeAndPad(object):
             box = xyxy2xywh(box)
             box = box / torch.tensor([w, h, w, h], dtype=torch.float32)
             input_dict['box'] = box
-
+        print(input_dict['box'])
         return input_dict
 
