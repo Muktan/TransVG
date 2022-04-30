@@ -259,7 +259,7 @@ class TransVGDataset(data.Dataset):
         img, phrase, bbox, img_filename = self.pull_item(idx)
         # phrase = phrase.decode("utf-8").encode().lower()
         phrase = phrase.lower()
-        print(type(img), img.shape)
+        print(type(img), img.size)
         print(type(bbox), bbox.shape)
         print(type(phrase), phrase)
         input_dict = {'img': img, 'box': bbox, 'text': phrase}
