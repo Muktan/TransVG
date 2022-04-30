@@ -148,8 +148,10 @@ def xyxy2xywh(x):
 
 def helper(x, w, h):
     x = [i*640 for i in x]
-    dw = 640 - w
-    dh = 604 - h
+    print(x)
+    dw = 640 - int(w)
+    dh = 604 - int(h)
+    print(w, h)
     top = round(dh / 2.0 - 0.1)
     left = round(dw / 2.0 - 0.1)
     c1 = xywh2xyxy(x)
