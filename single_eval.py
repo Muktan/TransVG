@@ -148,17 +148,19 @@ def xyxy2xywh(x):
 
 def helper(x, w, h):
     x = [i*640 for i in x]
-    print(x)
+    print("x", x)
     dw = 640 - int(w)
-    dh = 604 - int(h)
-    print(w, h)
+    dh = 640 - int(h)
+    print("w,h", w, h, dw, dh)
     top = round(dh / 2.0 - 0.1)
     left = round(dw / 2.0 - 0.1)
+    print("t,l",top, left)
     c1 = xywh2xyxy(x)
+    print("c1_1",c1)
     
     c1[0], c1[2] = c1[0]-left, c1[2]-left
     c1[1], c1[3] = c1[1]-top, c1[3]-top
-    c1 = xyxy2xywh(c1)
+    print("c1_2", c1)
     return c1
 
 def main(args):
@@ -222,13 +224,14 @@ def main(args):
     fig, ax = plt.subplots()
     ax.imshow(img)
     w, h = img.size
-    x1 = op.unbind(-1)
-    x_c,y_c,w,h = helper(x1, w, h)
-    rect = patches.Rectangle((x_c,y_c),w,h, edgecolor='r', facecolor="none")
+    
+    
+    x11,y11,x22,y22 = helper(op.unbind(-1), w, h)
+    rect = patches.Rectangle((x11,y11),x22-x11,y22-y11, edgecolor='r', facecolor="none")
     ax.add_patch(rect)
-    x2 = tar.unbind(-1)
-    x_c,y_c,w,h = helper(x2, w, h)
-    rect2 = patches.Rectangle((x_c,y_c),w,h, edgecolor='r', facecolor="none")
+    
+    x1,y1,x2,y2 = helper(tar.unbind(-1), w, h)
+    rect2 = patches.Rectangle((x1,y1),x2-x1,y2-y1, edgecolor='g', facecolor="none")
     ax.add_patch(rect2)
     plt.savefig("/content/result.png", dpi=150)
     plt.show()
