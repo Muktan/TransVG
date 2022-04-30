@@ -202,8 +202,8 @@ def main(args):
     x_c, y_c, w, h = tar.unbind(-1)
     rect2 = patches.Rectangle((x_c,y_c),w,h, edgecolor='r', facecolor="none")
     ax.add_patch(rect2)
-    plt.show()
     plt.savefig("/content/result.png", dpi=150)
+    plt.show()
     
     # call the plot function that will plot the image and the predicted bounding box
     # we know where the image is stored so we can directly plot it... then we have to draw a squar eover it
